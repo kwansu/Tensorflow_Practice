@@ -1,4 +1,3 @@
-from tensorflow.python.ops.gen_math_ops import square
 from python_simulation.MainPyGame import MainPygame
 from Othello_World import World_Othello as World
 import tensorflow as tf

@@ -17,32 +17,37 @@ y_test = tensorflow.keras.utils.to_categorical(y_test, 10)
 dropoutRate = 0.3
 
 model = tensorflow.keras.Sequential()
-model.add(tensorflow.keras.layers.Conv2D(32, kernel_size=(3, 3), activation='relu', padding='SAME', kernel_initializer='glorot_normal'))
+model.add(tensorflow.keras.layers.Conv2D(32, kernel_size=(
+    3, 3), activation='relu', padding='SAME', kernel_initializer='glorot_normal'))
 model.add(tensorflow.keras.layers.MaxPooling2D(pool_size=(2, 2)))
-model.add(tensorflow.keras.layers.Conv2D(64, kernel_size=(3, 3), activation='relu', kernel_initializer='glorot_normal'))
-model.add(tensorflow.keras.layers.Conv2D(32, kernel_size=(3, 3), activation='relu', kernel_initializer='glorot_normal'))
+model.add(tensorflow.keras.layers.Conv2D(64, kernel_size=(3, 3),
+          activation='relu', kernel_initializer='glorot_normal'))
+model.add(tensorflow.keras.layers.Conv2D(32, kernel_size=(3, 3),
+          activation='relu', kernel_initializer='glorot_normal'))
 model.add(tensorflow.keras.layers.MaxPooling2D(pool_size=(2, 2)))
 
 model.add(tensorflow.keras.layers.Flatten())
-model.add(tensorflow.keras.layers.Dense(10, activation='softmax', kernel_initializer='glorot_normal'))
+model.add(tensorflow.keras.layers.Dense(
+    10, activation='softmax', kernel_initializer='glorot_normal'))
 
 model.compile(optimizer=tensorflow.keras.optimizers.Adam(learning_rate=0.0005),
               loss='categorical_crossentropy', metrics=['accuracy'])
 
 start_time = time.time()
 start = time.gmtime(start_time)
-print("훈련 시작 : %d시 %d분 %d초"%(start.tm_hour, start.tm_min, start.tm_sec))
+print("훈련 시작 : %d시 %d분 %d초" % (start.tm_hour, start.tm_min, start.tm_sec))
 
 model.fit(x_train, y_train, batch_size=512, epochs=20, validation_split=0.1)
 
 end_time = time.time()
 end = time.gmtime(end_time)
-print("훈련 끝 : %d시 %d분 %d초"%(end.tm_hour, end.tm_min, end.tm_sec))
+print("훈련 끝 : %d시 %d분 %d초" % (end.tm_hour, end.tm_min, end.tm_sec))
 # 소요 시간 측정
 end_start = end_time - start_time
 end_start = time.gmtime(end_start)
-print("소요시간 : %d시 %d분 %d초"%(end_start.tm_hour, end_start.tm_min, end_start.tm_sec))
+print("소요시간 : %d시 %d분 %d초" %
+      (end_start.tm_hour, end_start.tm_min, end_start.tm_sec))
 
 print('학습결과 평가')
 predictions = model.evaluate(x_test, y_test)
-print('Loss, Accuracy :', predictions) # max 0.990
+print('Loss, Accuracy :', predictions)  # max 0.990
