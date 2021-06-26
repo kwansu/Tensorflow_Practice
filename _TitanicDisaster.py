@@ -25,7 +25,8 @@ ageMean_deadFemale = classifyAge(trainData, 0, "female").mean()
 
 age1 = classifyAge(trainData, 1, "male").fillna(ageMean_survivedMale, axis=0)
 age2 = classifyAge(trainData, 0, "male").fillna(ageMean_deadMale, axis=0)
-age3 = classifyAge(trainData, 1, "female").fillna(ageMean_survivedFemale, axis=0)
+age3 = classifyAge(trainData, 1, "female").fillna(
+    ageMean_survivedFemale, axis=0)
 age4 = classifyAge(trainData, 0, "female").fillna(ageMean_deadFemale, axis=0)
 
 trainData["Age"] = pandas.concat([age1, age2, age3, age4], axis=0)
@@ -40,9 +41,8 @@ trainData = trainData.dropna(axis=0)
 trainData = pandas.get_dummies(trainData, drop_first=True)
 
 # 데이터 노멀라이즈
-normalizedTrainData = (trainData - trainData.min()) / (
-    trainData.max() - trainData.min()
-)
+normalizedTrainData = (trainData - trainData.min()) / \
+    (trainData.max() - trainData.min())
 
 # 데이터 섞기
 normalizedTrainData = normalizedTrainData.sample(frac=1)
@@ -62,53 +62,29 @@ dropoutRate = 0.3
 
 model = tensorflow.keras.Sequential()
 
-model.add(
-    tensorflow.keras.layers.Dense(
-        128, activation="relu", kernel_initializer="glorot_normal"
-    )
-)
+model.add(tensorflow.keras.layers.Dense(
+    128, activation="relu", kernel_initializer="glorot_normal"))
 model.add(tensorflow.keras.layers.Dropout(dropoutRate))
-model.add(
-    tensorflow.keras.layers.Dense(
-        256, activation="relu", kernel_initializer="glorot_normal"
-    )
-)
+model.add(tensorflow.keras.layers.Dense(
+    256, activation="relu", kernel_initializer="glorot_normal"))
 model.add(tensorflow.keras.layers.Dropout(dropoutRate))
-model.add(
-    tensorflow.keras.layers.Dense(
-        512, activation="relu", kernel_initializer="glorot_normal"
-    )
-)
+model.add(tensorflow.keras.layers.Dense(
+    512, activation="relu", kernel_initializer="glorot_normal"))
 model.add(tensorflow.keras.layers.Dropout(dropoutRate))
-model.add(
-    tensorflow.keras.layers.Dense(
-        512, activation="relu", kernel_initializer="glorot_normal"
-    )
-)
+model.add(tensorflow.keras.layers.Dense(
+    512, activation="relu", kernel_initializer="glorot_normal"))
 model.add(tensorflow.keras.layers.Dropout(dropoutRate))
-model.add(
-    tensorflow.keras.layers.Dense(
-        256, activation="relu", kernel_initializer="glorot_normal"
-    )
-)
+model.add(tensorflow.keras.layers.Dense(
+    256, activation="relu", kernel_initializer="glorot_normal"))
 model.add(tensorflow.keras.layers.Dropout(dropoutRate))
-model.add(
-    tensorflow.keras.layers.Dense(
-        128, activation="relu", kernel_initializer="glorot_normal"
-    )
-)
+model.add(tensorflow.keras.layers.Dense(
+    128, activation="relu", kernel_initializer="glorot_normal"))
 model.add(tensorflow.keras.layers.Dropout(dropoutRate))
-model.add(
-    tensorflow.keras.layers.Dense(
-        1, activation="sigmoid", kernel_initializer="glorot_normal"
-    )
-)
+model.add(tensorflow.keras.layers.Dense(
+    1, activation="sigmoid", kernel_initializer="glorot_normal"))
 
-model.compile(
-    optimizer=tensorflow.keras.optimizers.Adam(learning_rate=0.0005),
-    loss="binary_crossentropy",
-    metrics=["accuracy"],
-)
+model.compile(optimizer=tensorflow.keras.optimizers.Adam(
+    learning_rate=0.0005),    loss="binary_crossentropy",    metrics=["accuracy"],)
 
 model.fit(x_train, y_train, batch_size=100, epochs=500, validation_split=0.2)
 
@@ -127,14 +103,17 @@ testData[testData["Fare"].isnull() == True]
 
 ageMean_male = testData[testData["Sex"] == "male"]["Age"].mean()
 ageMean_female = testData[testData["Sex"] == "female"]["Age"].mean()
-ageMale = testData[testData["Sex"] == "male"]["Age"].fillna(ageMean_male, axis=0)
-ageFeMale = testData[testData["Sex"] == "female"]["Age"].fillna(ageMean_female, axis=0)
+ageMale = testData[testData["Sex"] ==
+                   "male"]["Age"].fillna(ageMean_male, axis=0)
+ageFeMale = testData[testData["Sex"] ==
+                     "female"]["Age"].fillna(ageMean_female, axis=0)
 
 testData["Age"] = pandas.concat([ageMale, ageFeMale], axis=0)
 testData = testData.dropna(axis=0)
 
 testData = pandas.get_dummies(testData, drop_first=True)
-normalizedTestData = (testData - testData.min()) / (testData.max() - testData.min())
+normalizedTestData = (testData - testData.min()) / \
+    (testData.max() - testData.min())
 
 x_test = normalizedTestData.values
 # print(normalizedTestData.info())

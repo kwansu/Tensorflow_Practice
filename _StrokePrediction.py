@@ -14,13 +14,12 @@ loadedData = loadedData.dropna()
 loadedData.drop(columns=["smoking_status", "work_type"], inplace=True)
 
 # 문자열 데이터들 분류
-loadedData["gender"] = loadedData["gender"].apply(lambda x: 1 if x == "Male" else 0)
+loadedData["gender"] = loadedData["gender"].apply(
+    lambda x: 1 if x == "Male" else 0)
 loadedData["Residence_type"] = loadedData["Residence_type"].apply(
-    lambda x: 1 if x == "Urban" else 0
-)
+    lambda x: 1 if x == "Urban" else 0)
 loadedData["ever_married"] = loadedData["ever_married"].apply(
-    lambda x: 1 if x == "Yes" else 0
-)
+    lambda x: 1 if x == "Yes" else 0)
 
 loadedData.info()
 
@@ -59,11 +58,8 @@ model.add(tensorflow.keras.layers.Dense(729, activation="relu"))
 model.add(tensorflow.keras.layers.Dense(81, activation="relu"))
 model.add(tensorflow.keras.layers.Dense(1, activation="sigmoid"))
 
-model.compile(
-    optimizer=tensorflow.keras.optimizers.Adam(learning_rate=0.01),
-    loss="binary_crossentropy",
-    metrics=["accuracy"],
-)
+model.compile(optimizer=tensorflow.keras.optimizers.Adam(
+    learning_rate=0.01),    loss="binary_crossentropy",    metrics=["accuracy"],)
 
 model.fit(x_train, y_train, epochs=100, validation_split=0.2)
 
