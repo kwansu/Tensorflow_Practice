@@ -14,7 +14,7 @@ y_train = loadedData[5:, [-1]]
 model = tensorflow.keras.models.Sequential()
 model.add(tensorflow.keras.layers.Dense(1, input_dim=x_train.shape[1], activation='sigmoid'))
 
-model.compile(optimizer=tensorflow.keras.optimizers.SGD(),
+model.compile(optimizer=tensorflow.keras.optimizers.Adam(learning_rate=0.001), 
               loss='binary_crossentropy', metrics=['accuracy'])
 
 model.fit(x_train, y_train, epochs=1000)
