@@ -22,7 +22,6 @@ y_data = [[0, 0, 1],
 model = tensorflow.keras.models.Sequential()
 model.add(tensorflow.keras.layers.Dense(3, activation='softmax')) # softmax에 대해 더 알아보기
 
-# categorical_crossentropy => -∑(L * log(y))
 model.compile(optimizer=tensorflow.keras.optimizers.SGD(learning_rate=0.1),
               loss='categorical_crossentropy', metrics=['accuracy'])
 
