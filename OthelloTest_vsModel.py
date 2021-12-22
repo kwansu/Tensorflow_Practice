@@ -1,7 +1,7 @@
 from Othello_World import World_Othello as World
 import pygame
 import numpy as np
-import tensorflow as tf
+import tensorflow.keras.models as models
 
 pygame.init()
 width = 320
@@ -14,7 +14,7 @@ fps = 60
 isRunning = True
 isStoped = False
 
-model :tf.keras.Model = tf.keras.models.load_model('model/othello.h5')
+model = models.load_model('model/othello.h5')
 state = np.zeros([8,8],dtype=int)
 world = World(320, window)
 world.setup(state)

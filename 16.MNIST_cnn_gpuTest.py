@@ -1,36 +1,40 @@
-import tensorflow
+import tensorflow.python.keras as keras
+from tensorflow.python.keras.datasets import mnist
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.optimizers import Adam
+
 import time
 
-mnist = tensorflow.keras.datasets.mnist
+#mnist = mnist
 
 # 28x28 사이즈의 손글씨 데이타베이스 mnist를 로드한다. train 60000, test 10000
-(x_train, y_train), (x_test, y_test) = tensorflow.keras.datasets.mnist.load_data()
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
 
 x_train, x_test = x_train / 255.0, x_test / 255.0
 
 x_train = x_train.reshape(x_train.shape[0], 28, 28, 1)
 x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
 
-y_train = tensorflow.keras.utils.to_categorical(y_train, 10)
-y_test = tensorflow.keras.utils.to_categorical(y_test, 10)
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)
 
 dropoutRate = 0.3
 
-model = tensorflow.keras.Sequential()
-model.add(tensorflow.keras.layers.Conv2D(32, kernel_size=(
+model = keras.Sequential()
+model.add(keras.layers.Conv2D(32, kernel_size=(
     3, 3), activation='relu', padding='SAME', kernel_initializer='glorot_normal'))
-model.add(tensorflow.keras.layers.MaxPooling2D(pool_size=(2, 2)))
-model.add(tensorflow.keras.layers.Conv2D(64, kernel_size=(3, 3),
+model.add(keras.layers.MaxPooling2D(pool_size=(2, 2)))
+model.add(keras.layers.Conv2D(64, kernel_size=(3, 3),
           activation='relu', kernel_initializer='glorot_normal'))
-model.add(tensorflow.keras.layers.Conv2D(32, kernel_size=(3, 3),
+model.add(keras.layers.Conv2D(32, kernel_size=(3, 3),
           activation='relu', kernel_initializer='glorot_normal'))
-model.add(tensorflow.keras.layers.MaxPooling2D(pool_size=(2, 2)))
+model.add(keras.layers.MaxPooling2D(pool_size=(2, 2)))
 
-model.add(tensorflow.keras.layers.Flatten())
-model.add(tensorflow.keras.layers.Dense(
+model.add(keras.layers.Flatten())
+model.add(keras.layers.Dense(
     10, activation='softmax', kernel_initializer='glorot_normal'))
 
-model.compile(optimizer=tensorflow.keras.optimizers.Adam(learning_rate=0.0005),
+model.compile(optimizer=Adam(learning_rate=0.0005),
               loss='categorical_crossentropy', metrics=['accuracy'])
 
 start_time = time.time()

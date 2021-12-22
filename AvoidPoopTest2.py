@@ -1,4 +1,5 @@
 from python_simulation.MainPyGame import MainPygame
+from tensorflow.python.keras.models import load_model
 from AvoidPoop_World_forCNN import World_AvoidPoop as World
 import tensorflow as tf
 import numpy as np
@@ -8,7 +9,7 @@ import time
 width = 300
 height = 400
 
-model = tf.keras.models.load_model('model/avoidPoop_cnn.h5')
+model = load_model('model/avoidPoop_cnn.h5')
 world = World(width, height)
 
 
