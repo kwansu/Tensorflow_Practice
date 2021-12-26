@@ -46,4 +46,4 @@ class MainPygame:
             world.update(self.window, deltaTime*self.timeSpeed)
             pygame.display.update()
 
-        pygame.quit()     
+        pygame.quit()
