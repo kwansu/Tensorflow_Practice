@@ -3,7 +3,6 @@ from time import sleep
 import numpy as np
 import pygame
 import random
-import tensorflow
 
 
 class World_AvoidPoop:

@@ -1,10 +1,10 @@
 import gym
 import random
-import tensorflow as tf
 import numpy as np
-from tensorflow.python.keras.backend import dtype
+import tensorflow.keras as keras
 
-environment = gym.make('CartPole-v0')
+
+environment = gym.make("CartPole-v0")
 
 episodeCount = 1000
 discount_rate = 0.99
@@ -13,13 +13,13 @@ rewardSum = 0
 
 inputSize = environment.observation_space.shape[0]
 
-main_model = tf.keras.models.Sequential()
-main_model = tf.keras.Sequential()
-main_model.add(tf.keras.layers.Dense(16, 'relu', True, 'glorot_normal'))
-main_model.add(tf.keras.layers.Dense(2, kernel_initializer='glorot_normal'))
-main_model.compile(tf.keras.optimizers.Adam(learning_rate=0.001), loss='mse')
+main_model = keras.models.Sequential()
+main_model = keras.Sequential()
+main_model.add(keras.layers.Dense(16, "relu", True, "glorot_normal"))
+main_model.add(keras.layers.Dense(2, kernel_initializer="glorot_normal"))
+main_model.compile(keras.optimizers.Adam(learning_rate=0.001), loss="mse")
 
-targetModel = tf.keras.models.clone_model(main_model)
+targetModel = keras.models.clone_model(main_model)
 
 bufferSize = 2048
 
@@ -48,8 +48,12 @@ for i in range(episodeCount):
             x = np.reshape(states_buffer[stepCount], [1, inputSize])
             actions_buffer[stepCount] = np.argmax(main_model.predict(x))
 
-        states_buffer[stepCount+1], rewards_buffer[stepCount], isTerminal, _ = environment.step(
-            actions_buffer[stepCount])
+        (
+            states_buffer[stepCount + 1],
+            rewards_buffer[stepCount],
+            isTerminal,
+            _,
+        ) = environment.step(actions_buffer[stepCount])
 
         terminals_buffer[stepCount] = isTerminal
 
@@ -65,12 +69,16 @@ for i in range(episodeCount):
             order = random.sample(orderList[0:bufferIndex], batch_size)
             nextOrder = nextOrderList[order]
 
-            Q_target = rewards_buffer[:batch_size] + discount_rate * np.max(targetModel.predict(
-                states_buffer[1:batch_size+1]), axis=1) * ~terminals_buffer[:batch_size]
+            Q_target = (
+                rewards_buffer[:batch_size]
+                + discount_rate
+                * np.max(targetModel.predict(states_buffer[1 : batch_size + 1]), axis=1)
+                * ~terminals_buffer[:batch_size]
+            )
             y = main_model.predict(states_buffer[:batch_size])
             y[np.arange(batch_size), actions_buffer[:batch_size]] = Q_target
 
-            main_model.fit(states_buffer[:batch_size],y, batch_size, verbose=0)
+            main_model.fit(states_buffer[:batch_size], y, batch_size, verbose=0)
 
         if temp > 10:
             targetModel.set_weights(main_model.get_weights())
@@ -88,9 +96,9 @@ for i in range(episodeCount):
     if stepCount > 150:
         continueCount += 1
         if continueCount > 50:
-            print('통과기준을 만족')
+            print("통과기준을 만족")
             break
     else:
         continueCount = 0
 
-main_model.save('model/cartpole2.h5')
+main_model.save("model/cartpole2.h5")

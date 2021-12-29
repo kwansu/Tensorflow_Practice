@@ -1,6 +1,6 @@
 from python_simulation.MainPyGame import MainPygame
 from AvoidPoop_World import World_AvoidPoop as World
-import tensorflow as tf
+import tensorflow.keras as keras
 import numpy as np
 import collections
 import random
@@ -14,18 +14,18 @@ batchSize = 64
 targetInterval = 10
 buffer = collections.deque(maxlen=20000)
 
-mainModel = tf.keras.models.Sequential()
-mainModel = tf.keras.Sequential()
-mainModel.add(tf.keras.layers.Dense(256, 'relu', True, 'glorot_normal'))
-mainModel.add(tf.keras.layers.Dense(128, 'relu', True, 'glorot_normal'))
-mainModel.add(tf.keras.layers.Dense(3, kernel_initializer='glorot_normal'))
-mainModel.compile(tf.keras.optimizers.Adam(learning_rate=0.001), loss='mse')
+mainModel = keras.models.Sequential()
+mainModel = keras.Sequential()
+mainModel.add(keras.layers.Dense(256, "relu", True, "glorot_normal"))
+mainModel.add(keras.layers.Dense(128, "relu", True, "glorot_normal"))
+mainModel.add(keras.layers.Dense(3, kernel_initializer="glorot_normal"))
+mainModel.compile(keras.optimizers.Adam(learning_rate=0.001), loss="mse")
 
-targetModel = tf.keras.models.clone_model(mainModel)
+targetModel = keras.models.clone_model(mainModel)
 
 countR = 1 / episodeCount
 continueCount = 0  # 몇번 연속 기준을 통과했는지 판단용
-targetCount = targetInterval-batchSize
+targetCount = targetInterval - batchSize
 
 width = 300
 height = 400
@@ -41,8 +41,8 @@ simulationThread = threading.Thread(target=runSimulation)
 simulationThread.start()
 
 for i in range(episodeCount):
-    e = 1. / ((i / 10) + 1)
-    #e = countR * i
+    e = 1.0 / ((i / 10) + 1)
+    # e = countR * i
     isTerminal = False
     stepCount = 0
     rewardSum = 0
@@ -68,8 +68,12 @@ for i in range(episodeCount):
             nextStates = np.vstack([x[3] for x in trainBatch])
             terminals = np.array([x[4] for x in trainBatch])
 
-            Q_target = rewards + discountRate * \
-                np.max(targetModel.predict(nextStates), axis=1) * ~terminals
+            Q_target = (
+                rewards
+                + discountRate
+                * np.max(targetModel.predict(nextStates), axis=1)
+                * ~terminals
+            )
 
             y = mainModel.predict(states)
             y[np.arange(64), actions] = Q_target
@@ -85,7 +89,7 @@ for i in range(episodeCount):
         targetCount += 1
         rewardSum += reward
 
-        if (stepCount > 10000):
+        if stepCount > 10000:
             break
 
     print("episode: {}  steps: {}  rewardSum: {}".format(i, stepCount, rewardSum))
@@ -93,12 +97,12 @@ for i in range(episodeCount):
     if stepCount > 2000:
         continueCount += 1
         if continueCount > 10:
-            print('통과기준을 만족')
+            print("통과기준을 만족")
             break
     else:
         continueCount = 0
 
-mainModel.save('model/avoidPoop.h5')
+mainModel.save("model/avoidPoop.h5")
 
 world = World(width, height, mainModel)
 
@@ -117,7 +121,7 @@ for i in range(5):
 
         state = nextState
         stepCount += 1
-    
+
     print(stepCount)
 
 simulationThread.join()

@@ -1,10 +1,11 @@
 import gym
 import random
 import collections
-import tensorflow as tf
-import numpy
+import numpy as np
+import tensorflow.keras as keras
 
-environment = gym.make('CartPole-v0')
+
+environment = gym.make("CartPole-v0")
 
 state = environment.reset()
 episodeCount = 500
@@ -16,18 +17,18 @@ buffer = collections.deque(maxlen=10000)
 
 inputSize = environment.observation_space.shape[0]
 
-mainModel = tf.keras.models.Sequential()
-mainModel = tf.keras.Sequential()
-mainModel.add(tf.keras.layers.Dense(16, 'relu', True, 'glorot_normal'))
+mainModel = keras.models.Sequential()
+mainModel = keras.Sequential()
+mainModel.add(keras.layers.Dense(16, "relu", True, "glorot_normal"))
 # 출력은 오른쪽,왼쪽 2개
-mainModel.add(tf.keras.layers.Dense(2, kernel_initializer='glorot_normal'))
-mainModel.compile(tf.keras.optimizers.Adam(learning_rate=0.001), loss='mse')
+mainModel.add(keras.layers.Dense(2, kernel_initializer="glorot_normal"))
+mainModel.compile(keras.optimizers.Adam(learning_rate=0.001), loss="mse")
 
-targetModel = tf.keras.models.clone_model(mainModel)
+targetModel = keras.models.clone_model(mainModel)
 
 countR = 1 / episodeCount
-continueCount = 0 # 몇번 연속 기준을 통과했는지 판단용
-targetCount = targetInterval-batchSize
+continueCount = 0  # 몇번 연속 기준을 통과했는지 판단용
+targetCount = targetInterval - batchSize
 
 for i in range(episodeCount):
     e = countR * i
@@ -39,8 +40,8 @@ for i in range(episodeCount):
         if random.random() > e:
             action = environment.action_space.sample()
         else:
-            x = numpy.reshape(state, [1, inputSize])
-            action = numpy.argmax(mainModel.predict(x))
+            x = np.reshape(state, [1, inputSize])
+            action = np.argmax(mainModel.predict(x))
 
         nextState, reward, isTerminal, _ = environment.step(action)
 
@@ -51,16 +52,21 @@ for i in range(episodeCount):
 
         if len(buffer) > batchSize:
             trainBatch = random.sample(buffer, batchSize)
-            states = numpy.vstack([x[0] for x in trainBatch])
-            actions = numpy.array([x[1] for x in trainBatch])
-            rewards = numpy.array([x[2] for x in trainBatch])
-            nextStates = numpy.vstack([x[3] for x in trainBatch])
-            terminals = numpy.array([x[4] for x in trainBatch])
+            states = np.vstack([x[0] for x in trainBatch])
+            actions = np.array([x[1] for x in trainBatch])
+            rewards = np.array([x[2] for x in trainBatch])
+            nextStates = np.vstack([x[3] for x in trainBatch])
+            terminals = np.array([x[4] for x in trainBatch])
 
-            Q_target = rewards + discountRate * numpy.max(targetModel.predict(nextStates), axis=1) * ~terminals
+            Q_target = (
+                rewards
+                + discountRate
+                * np.max(targetModel.predict(nextStates), axis=1)
+                * ~terminals
+            )
 
             y = mainModel.predict(states)
-            y[numpy.arange(len(states)), actions] = Q_target
+            y[np.arange(len(states)), actions] = Q_target
 
             mainModel.fit(states, y, batchSize, verbose=0)
 
@@ -77,12 +83,12 @@ for i in range(episodeCount):
     if stepCount > 150:
         continueCount += 1
         if continueCount > 100:
-            print('통과기준을 만족')
+            print("통과기준을 만족")
             break
     else:
         continueCount = 0
 
-mainModel.save('model/cartpole.h5')
+mainModel.save("model/cartpole.h5")
 
 episodeCount = 0
 while episodeCount < 10:

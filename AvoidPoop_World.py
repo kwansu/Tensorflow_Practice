@@ -1,13 +1,13 @@
 from AvoidPoop_Objects import Player, Poop_Star, Object
 from time import sleep
+import tensorflow.keras as keras
 import numpy as np
 import pygame
 import random
-import tensorflow
 
 
 class World_AvoidPoop:
-    def __init__(self, width, height, model: tensorflow.keras.Model) -> None:
+    def __init__(self, width, height, model: keras.Model) -> None:
         self.model = model
         self.isPlayig = True
         self.onStep = True

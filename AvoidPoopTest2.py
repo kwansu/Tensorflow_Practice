@@ -1,10 +1,10 @@
 from python_simulation.MainPyGame import MainPygame
 from tensorflow.python.keras.models import load_model
 from AvoidPoop_World_forCNN import World_AvoidPoop as World
-import tensorflow as tf
 import numpy as np
 import threading
 import time
+
 
 width = 300
 height = 400
